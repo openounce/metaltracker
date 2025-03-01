@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precious Metals Portfolio Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #e0e0e0;
+            background-color: #262a33; /* This dark slate blue color matches the provided image */
+        }
+        h1, h2, h3 {
+            color: #ffffff;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .logo-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+        .logo {
+            max-width: 200px;
+            height: auto;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+        .auth-button {
+            background-color: transparent;
+            color: #aaaaaa;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .auth-button:hover {
+            background-color: #333a47;
+            color: #4CAF50;
+        }
+        .portfolio-summary {
+            background-color: #1e222b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .total-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 15px 0;
+        }
+        .holdings-container {
+            display: flex;
+            flex-direction: row;
+            gap: 30px;
+        }
+        .holdings-list {
+            flex: 3;
+            background-color: #1e222b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .add-form {
+            flex: 2;
+            background-color: #1e222b;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #3a4050;
+        }
+        th {
+            background-color: #333a47;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #2c313c;
+        }
+        .metal-row {
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #3a4050;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #333a47;
+            color: #e0e0e0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        .market-price {
+            color: #aaaaaa;
+            font-size: 0.9em;
+        }
+        .disclaimer {
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: #aaaaaa;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .holdings-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with logo and auth buttons -->
+    <div class="header-container">
+        <div style="width: 100px;"><!-- Empty div for spacing --></div>
+        <div class="logo-container">
+            <img src="logo.png" alt="Precious Metals Logo" class="logo" onerror="this.src='https://via.placeholder.com/200x100?text=OpenOunce'">
+        </div>
+        <div class="auth-buttons" id="auth-buttons">
+            <a href="signup.html" class="auth-button">Sign Up</a>
+            <a href="signin.html" class="auth-button">Sign In</a>
+        </div>
+    </div>
+    
+    <h1>Precious Metals Portfolio Tracker</h1>
+    
+    <div class="portfolio-summary">
+        <h2>Total Portfolio Value</h2>
+        <div class="total-value" id="portfolio-value">$0.00</div>
+        <div class="market-price">Based on current market prices</div>
+    </div>
+    
+    <div class="holdings-container">
+        <div class="holdings-list">
+            <h2>Your Metal Holdings</h2>
+            <table id="holdings-table">
+                <thead>
+                    <tr>
+                        <th>Metal</th>
+                        <th>Holdings (oz t)</th>
+                        <th>Current Price</th>
+                        <th>Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="holdings-summary">
+                    <!-- Summary rows by metal type will be added here -->
+                </tbody>
+            </table>
+            
+            <h3 style="margin-top: 30px;">Holdings Details</h3>
+            <table id="holdings-details">
+                <thead>
+                    <tr>
+                        <th>Metal</th>
+                        <th>Weight</th>
+                        <th>Purity</th>
+                        <th>Acquisition Date</th>
+                        <th>Purchase Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="holdings-body">
+                    <!-- Individual holding entries will be added here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="add-form">
+            <h2>Add to Your Holdings</h2>
+            <form id="metals-form">
+                <div class="form-group">
+                    <label for="metal-type">Metal Type:</label>
+                    <select id="metal-type" required>
+                        <option value="">Select a metal...</option>
+                        <option value="Gold">Gold (Au)</option>
+                        <option value="Silver">Silver (Ag)</option>
+                        <option value="Platinum">Platinum (Pt)</option>
+                        <option value="Palladium">Palladium (Pd)</option>
+                        <option value="Rhodium">Rhodium (Rh)</option>
+                        <option value="Copper">Copper (Cu)</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="other-metal-container" style="display: none;">
+                    <label for="other-metal">Specify Metal:</label>
+                    <input type="text" id="other-metal" placeholder="Enter metal name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="weight">Weight:</label>
+                    <input type="number" id="weight" step="0.001" min="0" required placeholder="Enter weight">
+                </div>
+                
+                <div class="form-group">
+                    <label for="weight-unit">Weight Unit:</label>
+                    <select id="weight-unit" required>
+                        <option value="oz">Troy Ounces (oz t)</option>
+                        <option value="g">Grams (g)</option>
+                        <option value="kg">Kilograms (kg)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="purity">Purity (%) (Optional - defaults to 99.9%):</label>
+                    <input type="number" id="purity" min="0" max="100" value="99.9">
+                </div>
+                
+                <div class="form-group">
+                    <label for="acquisition-date">Acquisition Date (Optional):</label>
+                    <input type="date" id="acquisition-date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="acquisition-price">Purchase Price (Total) (Optional):</label>
+                    <input type="number" id="acquisition-price" step="0.01" min="0" placeholder="Enter total price paid">
+                </div>
+                
+                <button type="submit">Add to Holdings</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="disclaimer">
+        <hr style="margin: 20px 0; border: 0; border-top: 1px solid #3a4050;">
+        <p><strong>Disclaimer:</strong> OpenOunce is 100% free. This tool is for informational purposes only and should not be used for financial advice. We make no guarantees about accuracy or completeness of data. Always consult a qualified financial professional for investment decisions.</p>
+        <p>© 2025 OpenOunce. All rights reserved.</p>
+    </div>
+
+    <script>
+        // Check if user is logged in, but don't restrict access
+        window.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            
+            // Update auth buttons if user is logged in
+            if (currentUser) {
+                // Update auth buttons with user info and logout
+                const authButtonsContainer = document.getElementById('auth-buttons');
+                authButtonsContainer.innerHTML = `
+                    <span style="font-size: 12px; color: #aaaaaa;">Hello, <strong>${currentUser}</strong></span>
+                    <button id="logout-btn" class="auth-button">Sign Out</button>
+                `;
+                
+                // Add logout functionality
+                document.getElementById('logout-btn').addEventListener('click', function() {
+                    sessionStorage.removeItem('currentUser');
+                    window.location.reload();
+                });
+                
+                // Set up user-specific storage key
+                holdingsStorageKey = `preciousMetalsHoldings_${currentUser}`;
+            } else {
+                // Use default storage key for non-logged in users
+                holdingsStorageKey = 'preciousMetalsHoldings_guest';
+            }
+            
+            // Load holdings
+            loadHoldings();
+        });
+        
+        // User-specific storage key
+        let holdingsStorageKey = 'preciousMetalsHoldings';
+        
+        // Sample market prices (in USD per troy ounce)
+        // In a real app, these would come from an API
+        const marketPrices = {
+            'Gold': 2023.50,
+            'Silver': 23.78,
+            'Platinum': 922.30,
+            'Palladium': 948.75,
+            'Rhodium': 4300.00,
+            'Copper': 3.89,
+            'Other': 100.00 // Default for other metals
+        };
+        
+        // Initialize holdings array
+        let holdings = [];
+        
+        // DOM Elements
+        const form = document.getElementById('metals-form');
+        const metalType = document.getElementById('metal-type');
+        const otherMetalContainer = document.getElementById('other-metal-container');
+        const otherMetal = document.getElementById('other-metal');
+        const holdingsBody = document.getElementById('holdings-body');
+        const holdingsSummary = document.getElementById('holdings-summary');
+        const portfolioValue = document.getElementById('portfolio-value');
+        
+        // Show/hide other metal input based on selection
+        metalType.addEventListener('change', function() {
+            if (this.value === 'Other') {
+                otherMetalContainer.style.display = 'block';
+                otherMetal.required = true;
+            } else {
+                otherMetalContainer.style.display = 'none';
+                otherMetal.required = false;
+            }
+        });
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const metal = metalType.value === 'Other' ? otherMetal.value : metalType.value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const weightUnit = document.getElementById('weight-unit').value;
+            
+            // Get purity (optional, default to 99.9%)
+            const purityInput = document.getElementById('purity');
+            const purity = purityInput.value ? parseFloat(purityInput.value) : 99.9;
+            
+            const acquisitionDate = document.getElementById('acquisition-date').value;
+            const acquisitionPrice = document.getElementById('acquisition-price').value;
+            
+            // Create new holding object
+            const newHolding = {
+                id: Date.now(), // Use timestamp as unique ID
+                metal,
+                weight,
+                weightUnit,
+                purity,
+                acquisitionDate,
+                acquisitionPrice
+            };
+            
+            // Add to holdings array
+            holdings.push(newHolding);
+            
+            // Save to localStorage
+            saveHoldings();
+            
+            // Update the tables
+            renderHoldings();
+            
+            // Reset form
+            form.reset();
+            otherMetalContainer.style.display = 'none';
+        });
+        
+        // Delete a holding
+        function deleteHolding(id) {
+            holdings = holdings.filter(holding => holding.id !== id);
+            saveHoldings();
+            renderHoldings();
+        }
+        
+        // Save holdings to localStorage with user-specific key
+        function saveHoldings() {
+            localStorage.setItem(holdingsStorageKey, JSON.stringify(holdings));
+        }
+        
+        // Load holdings from localStorage with user-specific key
+        function loadHoldings() {
+            holdings = JSON.parse(localStorage.getItem(holdingsStorageKey)) || [];
+            renderHoldings();
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return '$' + parseFloat(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+        
+        // Format weight with unit
+        function formatWeight(weight, unit) {
+            return `${weight} ${unit}`;
+        }
+        
+        // Convert weight to troy ounces
+        function convertToTroyOunces(weight, unit) {
+            if (unit === 'oz') return weight;
+            if (unit === 'g') return weight / 31.1035; // 1 troy oz = 31.1035g
+            if (unit === 'kg') return weight * 32.1507; // 1 kg = 32.1507 troy oz
+            return weight;
+        }
+        
+        // Calculate pure weight in troy ounces
+        function calculatePureOunces(holding) {
+            const weightInOz = convertToTroyOunces(holding.weight, holding.weightUnit);
+            return weightInOz * (holding.purity / 100);
+        }
+        
+        // Calculate holding value
+        function calculateValue(metal, pureOunces) {
+            const price = marketPrices[metal] || marketPrices['Other'];
+            return price * pureOunces;
+        }
+        
+        // Render holdings in tables
+        function renderHoldings() {
+            // Clear tables
+            holdingsBody.innerHTML = '';
+            holdingsSummary.innerHTML = '';
+            
+            if (holdings.length === 0) {
+                portfolioValue.textContent = formatCurrency(0);
+                return;
+            }
+            
+            // Group holdings by metal type
+            const metalTotals = {};
+            let totalPortfolioValue = 0;
+            
+            // Calculate totals by metal
+            holdings.forEach(holding => {
+                const metal = holding.metal;
+                if (!metalTotals[metal]) {
+                    metalTotals[metal] = {
+                        pureOunces: 0,
+                        value: 0
+                    };
+                }
+                
+                const pureOunces = calculatePureOunces(holding);
+                const value = calculateValue(metal, pureOunces);
+                
+                metalTotals[metal].pureOunces += pureOunces;
+                metalTotals[metal].value += value;
+                totalPortfolioValue += value;
+            });
+            
+            // Update portfolio value
+            portfolioValue.textContent = formatCurrency(totalPortfolioValue);
+            
+            // Add summary rows by metal
+            Object.entries(metalTotals).forEach(([metal, data]) => {
+                const summaryRow = document.createElement('tr');
+                summaryRow.className = 'metal-row';
+                
+                const price = marketPrices[metal] || marketPrices['Other'];
+                
+                summaryRow.innerHTML = `
+                    <td>${metal}</td>
+                    <td>${data.pureOunces.toFixed(3)} oz t</td>
+                    <td>${formatCurrency(price)} / oz t</td>
+                    <td>${formatCurrency(data.value)}</td>
+                    <td></td>
+                `;
+                
+                holdingsSummary.appendChild(summaryRow);
+            });
+            
+            // Add each individual holding to details table
+            holdings.forEach(holding => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${holding.metal}</td>
+                    <td>${formatWeight(holding.weight, holding.weightUnit)} (${holding.purity}% pure)</td>
+                    <td>${holding.purity}%</td>
+                    <td>${holding.acquisitionDate || 'Not specified'}</td>
+                    <td>${holding.acquisitionPrice ? formatCurrency(holding.acquisitionPrice) : 'Not specified'}</td>
+                    <td><button class="delete-btn" onclick="deleteHolding(${holding.id})">Delete</button></td>
+                `;
+                
+                holdingsBody.appendChild(row);
+            });
+        }
+        
+        // Make deleteHolding function available globally
+        window.deleteHolding = deleteHolding;
+    </script>
+</body>
+</html>
